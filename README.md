@@ -27,7 +27,7 @@
 
 ```bash
 # Клонируем и собираем
-git clone https://github.com/<your-org>/gitfame-light.git
+git clone https://github.com/4its/gitfame-light.git
 cd gitfame-light
 go build -o gitfame-light
 
