@@ -1,0 +1,59 @@
+project_name: git-fame-light
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: git-fame-light
+    main: ./main.go
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w
+      # пример: -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    # суффиксы файлов (расширение .exe для Windows добавится автоматически)
+    binary: git-fame-light
+
+archives:
+  - id: default
+    format: tar.gz
+    # для Windows лучше zip
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: >-
+      {{ .ProjectName }}_{{ .Version }}_{{- title .Os }}_{{ .Arch }}
+    files:
+      - LICENSE*
+      - README.md
+
+checksum:
+  name_template: 'checksums_{{ .Version }}.txt'
+  algorithm: sha256
+
+changelog:
+  use: git
+  sort: asc
+  filters:
+    exclude:
+      - '^docs?:'
+      - '^test:'
+      - '^chore:'
+      - Merge pull request
+      - Merge branch
+
+release:
+  # по умолчанию GitHub Releases
+  draft: false
+  prerelease: auto  # если тэг с -rc, -beta и т.п. — создаст prerelease автоматически
+
+# локальные "снепшоты" (для проверки) можно собрать так:
+# goreleaser release --snapshot --clean
